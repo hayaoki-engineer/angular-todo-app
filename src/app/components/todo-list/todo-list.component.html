@@ -1,0 +1,20 @@
+<app-todo-form></app-todo-form>
+
+<div class="filters">
+  <button
+    *ngFor="let filter of filters"
+    (click)="setFilter(filter)"
+    [class.active]="currentFilter === filter"
+    class="filter-button"
+  >
+    {{ filter === 'all' ? 'すべて' : filter === 'active' ? '未完了' : '完了'}}
+  </button>
+</div>
+
+<div class="todo-list">
+  <div *ngFor="let todo of filteredTodos$ | async" class="todo-item">
+    <input type="checkbox" class="todo-checkbox" />
+    <span class="todo-title">{{ todo.title }}</span>
+    <button class="delete-button">削除</button>
+  </div>
+</div>
