@@ -1,38 +1,82 @@
-# AngularTodoApp
+# Angular TODOアプリ
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.10.
+シンプルで使いやすいTODOアプリケーションです。Angularの最新バージョンを使用して実装されています。
 
-## Development server
+## 機能
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- TODOの追加、削除、完了/未完了の切り替え
+- フィルタリング機能（すべて/未完了/完了）
+- リアクティブな状態管理
+- モダンなUI/UXデザイン
 
-## Code scaffolding
+## 技術スタック
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Angular 18
+- RxJS
+- TypeScript
 
-## Build
+## アプリケーション構成
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### コンポーネント
 
-## Running unit tests
+- **AppComponent**: アプリケーションのルートコンポーネント
+- **TodoListComponent**: TODOリストの表示と管理を担当
+- **TodoFormComponent**: 新規TODO入力フォームを提供
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### サービス
 
-## Running end-to-end tests
+- **TodoService**: アプリケーションの状態管理を担当
+  - BehaviorSubjectを使用したTODOリストの管理
+  - TODOの追加、削除、状態変更の処理
+  - フィルタリング機能の提供
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## 実装の特徴
 
-## Further help
+### データフロー
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. **状態管理**
+   - TodoServiceでBehaviorSubjectを使用してTODOリストを一元管理
+   - コンポーネント間のデータ共有はサービスを介して実現
+   - 変更はすべてTodoServiceを通じて行われる
 
-## コンポーネント作成
+2. **リアクティブな更新**
+   - BehaviorSubjectによる状態管理
+   - AsyncPipeを使用した自動サブスクリプション管理
+   - コンポーネントでの明示的なサブスクリプション管理が不要
+
+### 主な機能の実装
+
+1. **TODO追加**
+   - フォームに入力されたテキストをTodoServiceに送信
+   - サービスが新しいTODOをリストに追加
+   - BehaviorSubjectを通じて自動的に画面更新
+
+2. **TODO完了/未完了の切り替え**
+   - チェックボックスクリックでイベント発火
+   - サービスで該当TODOの状態を反転
+   - 更新された状態が画面に反映
+
+3. **TODO削除**
+   - 削除ボタンクリックでイベント発火
+   - サービスで該当TODOをリストから削除
+   - 更新されたリストが画面に反映
+
+4. **フィルタリング**
+   - 「すべて」「未完了」「完了」のフィルター切り替え
+   - 選択されたフィルターに応じてTODOリストを絞り込み
+   - RxJSのmapオペレーターでフィルタリング処理
+
+## UI/UXの特徴
+
+- モダンでクリーンなデザイン
+- レスポンシブなレイアウト
+- 直感的な操作性
+- スムーズなアニメーション効果
+
+## 開発サーバーの起動
 
 ```bash
-ng generate component components/todo
-
-or
-
-ng g c components/todo
+npm start
 ```
 
+ブラウザで `http://localhost:4200` を開いてアプリケーションを確認できます。
