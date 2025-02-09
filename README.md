@@ -2,76 +2,121 @@
 
 シンプルで使いやすいTODOアプリケーションです。Angularの最新バージョンを使用して実装されています。
 
-## 機能
+## 機能と処理の流れ
 
-- TODOの追加、削除、完了/未完了の切り替え
-- フィルタリング機能（すべて/未完了/完了）
-- リアクティブな状態管理
-- モダンなUI/UXデザイン
+### 1. TODO追加機能
+
+1. ユーザーの入力
+   - TodoFormComponentで入力フォームを表示
+   - [(ngModel)]で入力値をnewTodoTitleと双方向バインディング
+   - フォーム送信時にaddTodo()メソッドを実行
+
+2. TodoFormComponentの処理
+   - 入力値の空白チェック
+   - TodoServiceのaddTodo()メソッドを呼び出し
+   - 入力フォームをクリア
+
+3. TodoServiceの処理
+   - 新しいTodoオブジェクトを作成（id, title, completed）
+   - BehaviorSubjectのnext()で既存リストに新しいTodoを追加
+   - 購読しているコンポーネントに自動で変更を通知
+
+4. 画面更新
+   - TodoListComponentが変更を検知
+   - AsyncPipeで自動的にテンプレートを更新
+   - 新しいTODOが画面に表示
+
+### 2. TODO完了/未完了切り替え機能
+
+1. ユーザーのアクション
+   - チェックボックスをクリック
+   - (change)イベントでtoggleTodo()メソッドを実行
+   - TodoのIDを引数として渡す
+
+2. TodoListComponentの処理
+   - TodoServiceのtoggleTodo()メソッドを呼び出し
+   - 対象TodoのIDを渡す
+
+3. TodoServiceの処理
+   - 該当Todoのcompletedプロパティを反転
+   - mapオペレーターで新しい配列を生成
+   - BehaviorSubjectのnext()で更新を通知
+
+4. 画面更新
+   - AsyncPipeで自動的にテンプレートを更新
+   - 完了状態に応じてスタイルを変更（取り消し線）
+
+### 3. TODO削除機能
+
+1. ユーザーのアクション
+   - 削除ボタンをクリック
+   - (click)イベントでdeleteTodo()メソッドを実行
+   - TodoのIDを引数として渡す
+
+2. TodoListComponentの処理
+   - TodoServiceのdeleteTodo()メソッドを呼び出し
+   - 削除対象のTodoIDを渡す
+
+3. TodoServiceの処理
+   - filterメソッドで該当IDのTodoを除外
+   - 新しい配列をBehaviorSubjectのnext()で通知
+
+4. 画面更新
+   - AsyncPipeで自動的にテンプレートを更新
+   - 削除されたTodoが画面から消える
+
+### 4. フィルタリング機能
+
+1. ユーザーのアクション
+   - フィルターボタンをクリック
+   - (click)イベントでsetFilter()メソッドを実行
+   - フィルター種類（all/active/completed）を渡す
+
+2. TodoListComponentの処理
+   - 現在のフィルター状態を更新
+   - TodoServiceのgetFilteredTodos()メソッドを呼び出し
+   - 新しいObservableを取得
+
+3. TodoServiceの処理
+   - BehaviorSubjectからTodoリストを取得
+   - mapオペレーターでフィルタリング条件を適用
+   - フィルター条件に合うTodoのみを返す
+
+4. 画面更新
+   - AsyncPipeで自動的にテンプレートを更新
+   - フィルター条件に合うTodoのみ表示
+   - アクティブなフィルターボタンのスタイルを変更
+
+## データの流れ
+
+### 状態管理（TodoService）
+```typescript
+private todos = new BehaviorSubject<Todo[]>([]); // 中央データストア
+
+// データの更新
+this.todos.next(updatedTodos);
+
+// データの購読
+this.todos.pipe(
+  map(todos => /* フィルタリング処理 */)
+)
+```
+
+### コンポーネント間の連携
+1. 親コンポーネント（TodoListComponent）
+   - TodoFormComponentを含む
+   - フィルタリングの状態管理
+   - TodoServiceとの連携
+
+2. 子コンポーネント（TodoFormComponent）
+   - 入力フォームの管理
+   - TodoServiceを介したデータ更新
 
 ## 技術スタック
 
 - Angular 18
 - RxJS
 - TypeScript
-
-## アプリケーション構成
-
-### コンポーネント
-
-- **AppComponent**: アプリケーションのルートコンポーネント
-- **TodoListComponent**: TODOリストの表示と管理を担当
-- **TodoFormComponent**: 新規TODO入力フォームを提供
-
-### サービス
-
-- **TodoService**: アプリケーションの状態管理を担当
-  - BehaviorSubjectを使用したTODOリストの管理
-  - TODOの追加、削除、状態変更の処理
-  - フィルタリング機能の提供
-
-## 実装の特徴
-
-### データフロー
-
-1. **状態管理**
-   - TodoServiceでBehaviorSubjectを使用してTODOリストを一元管理
-   - コンポーネント間のデータ共有はサービスを介して実現
-   - 変更はすべてTodoServiceを通じて行われる
-
-2. **リアクティブな更新**
-   - BehaviorSubjectによる状態管理
-   - AsyncPipeを使用した自動サブスクリプション管理
-   - コンポーネントでの明示的なサブスクリプション管理が不要
-
-### 主な機能の実装
-
-1. **TODO追加**
-   - フォームに入力されたテキストをTodoServiceに送信
-   - サービスが新しいTODOをリストに追加
-   - BehaviorSubjectを通じて自動的に画面更新
-
-2. **TODO完了/未完了の切り替え**
-   - チェックボックスクリックでイベント発火
-   - サービスで該当TODOの状態を反転
-   - 更新された状態が画面に反映
-
-3. **TODO削除**
-   - 削除ボタンクリックでイベント発火
-   - サービスで該当TODOをリストから削除
-   - 更新されたリストが画面に反映
-
-4. **フィルタリング**
-   - 「すべて」「未完了」「完了」のフィルター切り替え
-   - 選択されたフィルターに応じてTODOリストを絞り込み
-   - RxJSのmapオペレーターでフィルタリング処理
-
-## UI/UXの特徴
-
-- モダンでクリーンなデザイン
-- レスポンシブなレイアウト
-- 直感的な操作性
-- スムーズなアニメーション効果
 
 ## 開発サーバーの起動
 
