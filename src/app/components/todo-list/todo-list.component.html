@@ -7,14 +7,21 @@
     [class.active]="currentFilter === filter"
     class="filter-button"
   >
-    {{ filter === 'all' ? 'すべて' : filter === 'active' ? '未完了' : '完了'}}
+    {{ filter === "all" ? "すべて" : filter === "active" ? "未完了" : "完了" }}
   </button>
 </div>
 
 <div class="todo-list">
   <div *ngFor="let todo of filteredTodos$ | async" class="todo-item">
-    <input type="checkbox" class="todo-checkbox" />
-    <span class="todo-title">{{ todo.title }}</span>
+    <input
+      type="checkbox"
+      class="todo-checkbox"
+      [checked]="todo.completed"
+      (change)="toggleTodo(todo.id)"
+    />
+    <span [class.completed]="todo.completed" class="todo-title">{{
+      todo.title
+    }}</span>
     <button class="delete-button">削除</button>
   </div>
 </div>

@@ -27,6 +27,15 @@ export class TodoService {
     console.log('タスクの一覧:', this.todos.value)
   }
 
+  // タスクの状態を切り替えるメソッド
+  toggleTodo(id: number) {
+    const updatedTodos = this.todos.value.map(todo => 
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    )
+    this.todos.next(updatedTodos)
+  }
+
+  // フィルターされたタスクの一覧を取得するメソッド
   getFilteredTodos(filter: 'all' | 'active' | 'completed'): Observable<Todo[]> {
     return this.todos.pipe(
       map(todos => {

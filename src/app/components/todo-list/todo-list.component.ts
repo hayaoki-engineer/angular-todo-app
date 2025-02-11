@@ -23,8 +23,14 @@ export class TodoListComponent {
     this.filteredTodos$ = this.todoService.getFilteredTodos(this.currentFilter);
   }
 
+  // フィルターを切り替えるメソッド
   setFilter(filter: 'all' | 'active' | 'completed') {
     this.currentFilter = filter;
     this.filteredTodos$ = this.todoService.getFilteredTodos(filter);
+  }
+
+  // タスクの状態を切り替えるメソッド
+  toggleTodo(id: number) {
+    this.todoService.toggleTodo(id);
   }
 }
