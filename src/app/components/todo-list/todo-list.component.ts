@@ -25,7 +25,9 @@ export class TodoListComponent {
 
   // フィルターを切り替えるメソッド
   setFilter(filter: 'all' | 'active' | 'completed') {
+    // 現在のフィルターを更新
     this.currentFilter = filter;
+    // フィルターされたタスクの一覧を更新
     this.filteredTodos$ = this.todoService.getFilteredTodos(filter);
   }
 

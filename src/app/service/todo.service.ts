@@ -40,10 +40,13 @@ export class TodoService {
     return this.todos.pipe(
       map(todos => {
         switch (filter) {
+          // 未完了のタスクを取得
           case 'active':
             return todos.filter(todo => !todo.completed)
+          // 完了したタスクを取得
           case 'completed':
             return todos.filter(todo => todo.completed)
+          // 全てのタスクを取得
           default:
             return todos
         }
